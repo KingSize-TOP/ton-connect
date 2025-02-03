@@ -38,7 +38,7 @@ export default function Home() {
       await setDoc(doc(db, 'users', userId), userData, { merge: true }); // Merge to update only specified fields
       console.log('User information updated in Firestore.');
       // Redirect to Telegram bot after successful update
-      window.location.href = 'https://t.me/Gemcoinz_bot/Gemcoinzapp?startapp=command'; // Replace with your bot URL
+      // window.location.href = 'https://t.me/Gemcoinz_bot/Gemcoinzapp?startapp=command'; // Replace with your bot URL
     } catch (error) {
       console.log('Error updating Firestore:', error);
     }
