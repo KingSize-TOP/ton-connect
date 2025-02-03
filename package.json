@@ -12,6 +12,7 @@
     "@ton/core": "^0.59.0",
     "@tonconnect/sdk": "^3.0.5",
     "@tonconnect/ui-react": "^2.0.9",
+    "axios": "^1.7.9",
     "firebase": "^10.14.1",
     "next": "14.2.15",
     "react": "^18",

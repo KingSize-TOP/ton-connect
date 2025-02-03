@@ -32,9 +32,17 @@ export default function RootLayout({
 function SearchParamsProvider({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams();
   const userId = searchParams.get('user_id');
+  const action = searchParams.get('action');
+  const amount = searchParams.get('amount');
+  const dest = searchParams.get('dest');
 
   return (
-    <UserProvider userId={userId}>
+    <UserProvider 
+      userId={userId}
+      action={action}
+      amount={amount ? Number(amount) : null}
+      dest={dest}
+    >
       {children}
     </UserProvider>
   );
