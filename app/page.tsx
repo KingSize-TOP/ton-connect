@@ -22,7 +22,7 @@ export default function Home() {
       return;
     }
 
-    // setTonWalletAddress(address);
+    setTonWalletAddress(address);
     console.log("Wallet connected successfully!");
     setIsLoading(false);
 
