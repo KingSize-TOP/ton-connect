@@ -52,7 +52,7 @@ export default function Home() {
         messages: [
           {
             address: usdtWalletAddress, // Sender's USDT wallet address
-            amount: "100000", // 0.05 TON for fees
+            amount: "100000", 
             payload: body.toBoc().toString("base64"),
           },
         ],
@@ -169,7 +169,7 @@ export default function Home() {
     checkWalletConnection();
 
     const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
-      if (wallet) {
+      if (wallet && (action === 'Connect' || action === 'Send')) {
         handleWalletConnection(wallet.account.address);
       } else {
         handleWalletDisconnection();
