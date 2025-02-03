@@ -86,7 +86,12 @@ export default function Home() {
   };
 
   const sendUSDTTransfer = useCallback(async () => {
+    console.log("Send USDT Transfer");
+    console.log("address:", tonConnectUI.account?.address);
+    console.log("Amount:", amount, " , Dest:", dest);
+
     if (tonConnectUI.account?.address && amount && dest) {
+      console.log("Start transaction");
       const usdtWalletAddress = await getUsdtWallet(tonConnectUI.account.address);
       const body = beginCell()
       .storeUint(0xf8a7ea5, 32) // transfer operation code
