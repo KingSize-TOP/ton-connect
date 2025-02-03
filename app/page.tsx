@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useTonConnectUI } from '@tonconnect/ui-react';
-import { Address, beginCell } from '@ton/core';
-import axios from 'axios';
-import { doc, setDoc } from 'firebase/firestore'; // Import Firestore methods
-import { useCallback, useEffect, useState } from 'react';
-import { useWalletInfo } from './context/UserContext';
-import { db } from './firebase/firebase'; // Import your firebase config
+import { useTonConnectUI } from "@tonconnect/ui-react";
+import { Address, beginCell } from "@ton/core";
+import axios from "axios";
+import { doc, setDoc } from "firebase/firestore"; // Import Firestore methods
+import { useCallback, useEffect, useState } from "react";
+import { useWalletInfo } from "./context/UserContext";
+import { db } from "./firebase/firebase"; // Import your firebase config
 
 export default function Home() {
   const [tonConnectUI] = useTonConnectUI();
@@ -14,38 +14,41 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const { userId, action, amount, dest } = useWalletInfo();
 
-  const USDT_MASTER_ADDRESS = "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs";
+  const USDT_MASTER_ADDRESS =
+    "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs";
 
-  const handleWalletConnection = useCallback(async (address: string) => {
+  const handleWalletConnection = useCallback(
+    async (address: string) => {
+      console.log("this is the adress", address);
 
-    console.log("this is the adress",address)
-    
-    if (!userId) {
-      console.error("User ID is null or undefined, cannot update Firestore.");
-      return;
-    }
+      if (!userId) {
+        console.error("User ID is null or undefined, cannot update Firestore.");
+        return;
+      }
 
-    // setTonWalletAddress(address);
-    console.log("Wallet connected successfully!");
-    setIsLoading(false);
+      // setTonWalletAddress(address);
+      console.log("Wallet connected successfully!");
+      setIsLoading(false);
 
-    // User data to update in Firestore
-    const userData = {
-      wallet_address: address,
-      connectedAt: new Date().toISOString(), // You can add more fields as needed
-      wallet_connected: true
-    };
+      // User data to update in Firestore
+      const userData = {
+        wallet_address: address,
+        connectedAt: new Date().toISOString(), // You can add more fields as needed
+        wallet_connected: true,
+      };
 
-    // Update user info in Firestore using userId
-    try {
-      await setDoc(doc(db, 'users', userId), userData, { merge: true }); // Merge to update only specified fields
-      console.log('User information updated in Firestore.');
-      // Redirect to Telegram bot after successful update
-      // window.location.href = 'https://t.me/Gemcoinz_bot/Gemcoinzapp?startapp=command'; // Replace with your bot URL
-    } catch (error) {
-      console.log('Error updating Firestore:', error);
-    }
-  }, [userId]);
+      // Update user info in Firestore using userId
+      try {
+        await setDoc(doc(db, "users", userId), userData, { merge: true }); // Merge to update only specified fields
+        console.log("User information updated in Firestore.");
+        // Redirect to Telegram bot after successful update
+        // window.location.href = 'https://t.me/Gemcoinz_bot/Gemcoinzapp?startapp=command'; // Replace with your bot URL
+      } catch (error) {
+        console.log("Error updating Firestore:", error);
+      }
+    },
+    [userId]
+  );
 
   const handleWalletDisconnection = useCallback(async () => {
     if (tonConnectUI.connected) {
@@ -59,17 +62,17 @@ export default function Home() {
 
     const userData = {
       wallet_address: null,
-      wallet_connected: false
+      wallet_connected: false,
     };
 
     // Update user info in Firestore using userId
     try {
-      await setDoc(doc(db, 'users', userId), userData, { merge: true }); // Merge to update only specified fields
-      console.log('User information updated in Firestore.');
+      await setDoc(doc(db, "users", userId), userData, { merge: true }); // Merge to update only specified fields
+      console.log("User information updated in Firestore.");
       // Redirect to Telegram bot after successful update
       // window.location.href = 'https://t.me/Gemcoinz_bot/Gemcoinzapp?startapp=command'; // Replace with your bot URL
     } catch (error) {
-      console.log('Error updating Firestore:', error);
+      console.log("Error updating Firestore:", error);
     }
     // setTonWalletAddress(null);
     console.log("Wallet disconnected successfully!");
@@ -92,17 +95,19 @@ export default function Home() {
 
     if (tonConnectUI.account?.address && amount && dest) {
       console.log("Start transaction");
-      const usdtWalletAddress = await getUsdtWallet(tonConnectUI.account.address);
+      const usdtWalletAddress = await getUsdtWallet(
+        tonConnectUI.account.address
+      );
       const body = beginCell()
-      .storeUint(0xf8a7ea5, 32) // transfer operation code
-      .storeUint(0, 64) // query id
-      .storeCoins(amount*1000000) // amount in nanoUSDT
-      .storeAddress(Address.parse(dest)) // recipient address
-      .storeAddress(Address.parse(tonConnectUI.account?.address)) // sender's address for response
-      .storeUint(0, 1) // no custom payload
-      .storeCoins(1) // forward amount (1 TON)
-      .storeUint(0, 1) // no forward payload
-      .endCell();
+        .storeUint(0xf8a7ea5, 32) // transfer operation code
+        .storeUint(0, 64) // query id
+        .storeCoins(amount * 1000000) // amount in nanoUSDT
+        .storeAddress(Address.parse(dest)) // recipient address
+        .storeAddress(Address.parse(tonConnectUI.account?.address)) // sender's address for response
+        .storeUint(0, 1) // no custom payload
+        .storeCoins(1) // forward amount (1 TON)
+        .storeUint(0, 1) // no forward payload
+        .endCell();
 
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 360, // Valid for 6 minutes
@@ -116,13 +121,12 @@ export default function Home() {
       };
       const result = await tonConnectUI.sendTransaction(transaction);
       console.log("Result:", result);
-
     }
   }, [amount, dest, tonConnectUI]);
 
   useEffect(() => {
     const checkWalletConnection = async () => {
-      if (action === 'Connect') {
+      if (action === "Connect") {
         if (tonConnectUI.account?.address) {
           console.log("User is already connected, disconnecting...");
           await handleWalletDisconnection(); // Automatically disconnect
@@ -131,13 +135,30 @@ export default function Home() {
           handleWalletDisconnection(); // Ensure disconnection if no address is present
           await tonConnectUI.openModal(); // Open modal if no connection
         }
-      } else if (action === 'Disconnect') {
+      } else if (action === "Disconnect") {
         if (tonConnectUI.connected) {
           setIsLoading(true);
           await handleWalletDisconnection();
           await tonConnectUI.openModal(); // Reopen connection modal
+        } else {
+          const userData = {
+            wallet_address: null,
+            wallet_connected: false,
+          };
+
+          // Update user info in Firestore using userId
+          if (userId) {
+            try {
+              await setDoc(doc(db, "users", userId), userData, { merge: true }); // Merge to update only specified fields
+              console.log("User information updated in Firestore.");
+              // Redirect to Telegram bot after successful update
+              // window.location.href = 'https://t.me/Gemcoinz_bot/Gemcoinzapp?startapp=command'; // Replace with your bot URL
+            } catch (error) {
+              console.log("Error updating Firestore:", error);
+            }
+          }
         }
-      } else if (action === 'Send') {
+      } else if (action === "Send") {
         sendUSDTTransfer();
       }
     };
@@ -155,7 +176,13 @@ export default function Home() {
     return () => {
       unsubscribe();
     };
-  }, [tonConnectUI, action, handleWalletConnection, handleWalletDisconnection, sendUSDTTransfer]);
+  }, [
+    tonConnectUI,
+    action,
+    handleWalletConnection,
+    handleWalletDisconnection,
+    sendUSDTTransfer,
+  ]);
 
   if (isLoading) {
     return (
@@ -168,8 +195,6 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      
-    </main>
+    <main className="flex min-h-screen flex-col items-center justify-center"></main>
   );
 }
