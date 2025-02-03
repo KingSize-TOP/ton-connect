@@ -10,7 +10,7 @@ import { db } from './firebase/firebase'; // Import your firebase config
 
 export default function Home() {
   const [tonConnectUI] = useTonConnectUI();
-  const [tonWalletAddress, setTonWalletAddress] = useState<string | null>(null);
+  // const [tonWalletAddress, setTonWalletAddress] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { userId, action, amount, dest } = useWalletInfo();
 
@@ -25,7 +25,7 @@ export default function Home() {
       return;
     }
 
-    setTonWalletAddress(address);
+    // setTonWalletAddress(address);
     console.log("Wallet connected successfully!");
     setIsLoading(false);
 
@@ -71,7 +71,7 @@ export default function Home() {
     } catch (error) {
       console.log('Error updating Firestore:', error);
     }
-    setTonWalletAddress(null);
+    // setTonWalletAddress(null);
     console.log("Wallet disconnected successfully!");
     setIsLoading(false);
   }, [tonConnectUI, userId]);
